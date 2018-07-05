@@ -9,7 +9,7 @@ import devpipeline_build.build
 def main(args=None):
     # pylint: disable=missing-docstring
     builder = devpipeline_core.command.TargetTool([
-        devpipeline_build.build.build_task
+        devpipeline_build.builder.build_task
     ], prog="dev-pipeline build", description="Build targets")
     devpipeline_core.command.execute_tool(builder, args)
 
