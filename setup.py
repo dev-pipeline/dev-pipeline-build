@@ -16,7 +16,7 @@ setup(
 
     entry_points={
         'devpipeline.drivers': [
-            'build = devpipeline_build.build:main'
+            'build = devpipeline_build.build:_BUILD_COMMAND'
         ],
 
         'devpipeline.builders': [

@@ -13,6 +13,7 @@ def main(args=None):
     ], prog="dev-pipeline build", description="Build targets")
     devpipeline_core.command.execute_command(builder, args)
 
+_BUILD_COMMAND = (main, "Build and install a set of components.")
 
 if __name__ == '__main__':
     main()
