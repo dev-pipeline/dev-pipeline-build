@@ -8,10 +8,10 @@ import devpipeline_build.build
 
 def main(args=None):
     # pylint: disable=missing-docstring
-    builder = devpipeline_core.command.TargetTool([
+    builder = devpipeline_core.command.make_command([
         devpipeline_build.builder.build_task
     ], prog="dev-pipeline build", description="Build targets")
-    devpipeline_core.command.execute_tool(builder, args)
+    devpipeline_core.command.execute_command(builder, args)
 
 
 if __name__ == '__main__':
