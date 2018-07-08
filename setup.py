@@ -40,7 +40,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: BSD License",
         "Topic :: Software Development",
-        "Topic :: Software Development :: Version Control",
+        "Topic :: Software Development :: Build Tools",
         "Topic :: Utilities"
     ]
 )
