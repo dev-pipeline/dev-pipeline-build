@@ -20,7 +20,7 @@ setup(
         ],
 
         'devpipeline.builders': [
-            'nothing = devpipeline_build.builder:_nothing_builder',
+            'nothing = devpipeline_build.builder:_NOTHING_BUILDER',
         ]
     },
 
