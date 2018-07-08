@@ -3,30 +3,30 @@ build
 
 Synopsis
 --------
-.. code::
+::
 
-    dev-pipeline build [-h] [--executor EXECUTOR] [targets [targets ...]]
+    dev-pipeline build [-h] [--list-builders] [--dependencies DEPENDENCIES]
+                       [--executor EXECUTOR]
+                       [targets [targets ...]]
 
 
 Description
 -----------
-This tool builds one or more targets along with their dependencies.  The
-specific order of dependencies isn't guaranteed, but any package will be built
-before packages that depend on it.
+This tool builds one or more components along with their dependencies
+(controlled by :code:`--dependencies`).  The specific order components are
+built isn't guaranteed, even across sequential runs.
 
 If no targets are specified, all targets will be built.
 
 
 Options
 -------
-  -h, --help           show this help message and exit
-  --executor EXECUTOR  The amount of verbosity to use. Options are "quiet"
-                       (print no extra information), "verbose" (print
-                       additional information), "dry-run" (print commands to
-                       execute, but don't run them), and "silent" (print
-                       nothing). Regardless of this option, errors are always
-                       printed. (default: quiet)
-
+  -h, --help            show this help message and exit
+  --list-builders       List the available builder tools
+  --dependencies DEPENDENCIES
+                        Control how build dependencies are handled. (default:
+                        deep)
+  --executor EXECUTOR   The method to execute commands. (default: quiet)
 
 
 Config Options
@@ -36,16 +36,3 @@ Config Options
 * :code:`install_path` - The path *within the build directory* to install a
   package.  If unspecified, :code:`install` will be used.
 * :code:`no_install` - Prevent a package from being installed.
-
-
-Supported Builders
-------------------
-Options here are officially supported by dev-pipeline.  Other options may be
-available using third-party, non-supported plugins.
-
-* cmake_ - (**Requires the git plugin**) Build using CMake.
-* nothing - No build step.  This is useful for dependencies that don't produce
-  any artifacts, but are needed for some reason.
-
-
-.. _cmake: https://github.com/dev-pipeline/dev-pipeline-cmake/blob/master/docs/builder-cmake.rst

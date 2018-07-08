@@ -10,17 +10,25 @@ import devpipeline_build
 
 
 def _nothing_builder(current_config, common_wrapper):
-    class NothingBuilder:
+    # Unused variables
+    del current_config
+    del common_wrapper
+
+    class _NothingBuilder:
         def configure(self, src_dir, build_dir):
+            # pylint: disable=missing-docstring
             pass
 
         def build(self, build_dir):
+            # pylint: disable=missing-docstring
             pass
 
         def install(self, build_dir, path):
+            # pylint: disable=missing-docstring
             pass
 
-    return NothingBuilder()
+    return _NothingBuilder()
+
 
 _NOTHING_BUILDER = (_nothing_builder, "Do nothing.")
 
