@@ -14,6 +14,13 @@ def _list_builders():
                                devpipeline_build.BUILDERS[builder][1]))
 
 
+_MAJOR = 0
+_MINOR = 2
+_PATCH = 0
+
+_STRING = "{}.{}.{}".format(_MAJOR, _MINOR, _PATCH)
+
+
 class BuildCommand(devpipeline_core.command.TargetCommand):
     """Class to provide build functionality to dev-pipeline."""
 
@@ -27,6 +34,7 @@ class BuildCommand(devpipeline_core.command.TargetCommand):
         self.enable_executors()
         self.set_tasks([devpipeline_build.builder.build_task])
         self.helper_fn = lambda: super(BuildCommand, self).process()
+        self.set_version(_STRING)
 
     def setup(self, arguments):
         if "list_builders" in arguments:
