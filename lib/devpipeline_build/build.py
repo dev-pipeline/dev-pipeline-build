@@ -4,6 +4,7 @@
 import argparse
 
 import devpipeline_core.command
+import devpipeline_configure.cache
 
 import devpipeline_build.builder
 
@@ -24,8 +25,9 @@ _STRING = "{}.{}.{}".format(_MAJOR, _MINOR, _PATCH)
 class BuildCommand(devpipeline_core.command.TargetCommand):
     """Class to provide build functionality to dev-pipeline."""
 
-    def __init__(self):
-        super().__init__(prog="dev-pipeline build",
+    def __init__(self, config_fn):
+        super().__init__(config_fn=config_fn,
+                         prog="dev-pipeline build",
                          description="Build targets")
         self.add_argument("--list-builders", action='store_true',
                           default=argparse.SUPPRESS,
@@ -44,9 +46,9 @@ class BuildCommand(devpipeline_core.command.TargetCommand):
         self.helper_fn()
 
 
-def main(args=None):
+def main(args=None, config_fn=devpipeline_configure.cache.update_cache):
     # pylint: disable=missing-docstring
-    builder = BuildCommand()
+    builder = BuildCommand(config_fn)
     # pylint: disable=missing-docstring
     devpipeline_core.command.execute_command(builder, args)
 
