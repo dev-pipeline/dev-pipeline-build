@@ -32,6 +32,13 @@ def _nothing_builder(current_config):
 _NOTHING_BUILDER = (_nothing_builder, "Do nothing.")
 
 
+def _no_build_check(configuration, error_fn):
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        if "build" not in component:
+            error_fn("No builder declared in {}".format(component_name))
+
+
 def _make_builder(current_target):
     """
     Create and return a Builder for a component.
@@ -56,9 +63,12 @@ def build_task(current_target):
     build_path = target.get("dp.build_dir")
     if not os.path.exists(build_path):
         os.makedirs(build_path)
-    builder = _make_builder(current_target)
-    builder.configure(target.get("dp.src_dir"), build_path)
-    builder.build(build_path)
-    if "no_install" not in target:
-        builder.install(build_path, path=target.get("install_path",
-                                                    "install"))
+    try:
+        builder = _make_builder(current_target)
+        builder.configure(target.get("dp.src_dir"), build_path)
+        builder.build(build_path)
+        if "no_install" not in target:
+            builder.install(build_path, path=target.get("install_path",
+                                                        "install"))
+    except devpipeline_core.toolsupport.MissingToolKey as e:
+        current_target["executor"].warning(e)

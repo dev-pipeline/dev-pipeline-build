@@ -25,6 +25,10 @@ setup(
 
         'devpipeline.builders': [
             'nothing = devpipeline_build.builder:_NOTHING_BUILDER',
+        ],
+
+        'devpipeline.config_sanitizers': [
+            "missing-build-option = devpipeline_build.builder:_no_build_check"
         ]
     },
 
