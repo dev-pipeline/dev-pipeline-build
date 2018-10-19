@@ -51,6 +51,25 @@ def _make_builder(current_target):
         current_target)
 
 
+def _find_folder(file, path):
+    for root, dirs, files in os.walk(path):
+        if file in files:
+            # return os.path.join(root, file)
+            return root
+    return ""
+
+
+def _find_file_paths(component, install_path):
+    def _split_val(val):
+        index = val.find('=')
+        return (val[:index], val[index + 1:])
+
+    for val in component.get_list('build.artifact_paths'):
+        key, required = _split_val(val)
+        found_path = _find_folder(required, install_path)
+        component.set("dp.build.artifact_path.{}".format(key), found_path)
+
+
 def build_task(current_target):
     """
     Build a target.
@@ -68,7 +87,9 @@ def build_task(current_target):
         builder.configure(target.get("dp.src_dir"), build_path)
         builder.build(build_path)
         if "no_install" not in target:
-            builder.install(build_path, path=target.get("install_path",
-                                                        "install"))
+            install_path = path = target.get(
+                "install_path", fallback="install")
+            builder.install(build_path, install_path)
+            _find_file_paths(target, os.path.join(build_path, install_path))
     except devpipeline_core.toolsupport.MissingToolKey as e:
         current_target["executor"].warning(e)
