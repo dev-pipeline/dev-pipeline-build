@@ -34,4 +34,11 @@ class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):
 
 
 def make_simple_builder(real_builder, configuration):
+    """
+    Create an Build instance that leverages executors.
+
+    Arguments:
+    real_builder - a class instance that provides an Build interface
+    configuration - the configuration for the Build target
+    """
     return _SimpleBuild(real_builder, configuration)

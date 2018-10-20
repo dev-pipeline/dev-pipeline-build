@@ -53,6 +53,7 @@ def _make_builder(current_target):
 
 def _find_folder(file, path):
     for root, dirs, files in os.walk(path):
+        del dirs
         if file in files:
             # return os.path.join(root, file)
             return root
@@ -87,9 +88,9 @@ def build_task(current_target):
         builder.configure(target.get("dp.src_dir"), build_path)
         builder.build(build_path)
         if "no_install" not in target:
-            install_path = path = target.get(
+            install_path = target.get(
                 "install_path", fallback="install")
             builder.install(build_path, install_path)
             _find_file_paths(target, os.path.join(build_path, install_path))
-    except devpipeline_core.toolsupport.MissingToolKey as e:
-        current_target["executor"].warning(e)
+    except devpipeline_core.toolsupport.MissingToolKey as mtk:
+        current_target["executor"].warning(mtk)
