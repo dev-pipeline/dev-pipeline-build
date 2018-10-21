@@ -5,9 +5,21 @@ Root module for the build plugin.  It provides the BUILDERS dictionary, which
 contains every builder plugin.
 """
 
+import os.path
+
 import devpipeline_core.plugin
 
 BUILDERS = devpipeline_core.plugin.query_plugins('devpipeline.builders')
+
+
+def _make_build_dir(configuration):
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        component.set(
+            'dp.build_dir',
+            os.path.join(
+                component.get("dp.build_root"),
+                component_name))
 
 
 class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):

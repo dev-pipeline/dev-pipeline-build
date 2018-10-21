@@ -27,6 +27,10 @@ setup(
             'nothing = devpipeline_build.builder:_NOTHING_BUILDER',
         ],
 
+        'devpipeline.config_modifiers': [
+            'build_dir = devpipeline_build:_make_build_dir'
+        ],
+
         'devpipeline.config_sanitizers': [
             "missing-build-option = devpipeline_build.builder:_no_build_check",
             "deprecated-no-install = devpipeline_build.builder:_deprecated_no_install_check",
