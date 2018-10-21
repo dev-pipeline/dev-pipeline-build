@@ -30,24 +30,59 @@ def _nothing_builder(current_config):
 
 
 _NOTHING_BUILDER = (_nothing_builder, "Do nothing.")
+_BUILD_TOOL_KEYS = ['build.tool', 'build']
+_NO_INSTALL_KEYS = ['build.no_install', 'no_install']
+_INSTALL_PATH_KEYS = ['build.install_path', 'install_path']
+
+
+def _find_key(component, keys):
+    for key in keys:
+        if key in component:
+            return key
+    return None
 
 
 def _no_build_check(configuration, error_fn):
     for component_name in configuration.components():
         component = configuration.get(component_name)
-        if "build" not in component:
+        build_key = _find_key(component, _BUILD_TOOL_KEYS)
+        if not build_key:
             error_fn("No builder declared in {}".format(component_name))
+        if build_key and (build_key != _BUILD_TOOL_KEYS[0]):
+            error_fn("{}: {} is deprecated; migrate to {}".format(
+                component_name, build_key, _BUILD_TOOL_KEYS[0]))
 
 
-def _make_builder(current_target):
+def _check_deprecated_helper(configuration, keys, error_fn):
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        key = _find_key(component, keys)
+        if key and (key != keys[0]):
+            error_fn(
+                "{}: {} is deprecated; migrated to {}".format(
+                    component_name, key, keys[0]))
+
+
+def _deprecated_no_install_check(configuration, error_fn):
+    _check_deprecated_helper(configuration, _NO_INSTALL_KEYS, error_fn)
+
+
+def _deprecated_install_path_check(configuration, error_fn):
+    _check_deprecated_helper(configuration, _INSTALL_PATH_KEYS, error_fn)
+
+
+def _make_builder(config, current_target):
     """
     Create and return a Builder for a component.
 
     Arguments
     component - The component the builder should be created for.
     """
+    tool_key = devpipeline_core.toolsupport.choose_tool_key(
+        current_target, _BUILD_TOOL_KEYS)
+
     return devpipeline_core.toolsupport.tool_builder(
-        current_target["current_config"], "build", devpipeline_build.BUILDERS,
+        config, tool_key, devpipeline_build.BUILDERS,
         current_target)
 
 
@@ -84,12 +119,15 @@ def build_task(current_target):
     if not os.path.exists(build_path):
         os.makedirs(build_path)
     try:
-        builder = _make_builder(current_target)
+        builder = _make_builder(target, current_target)
         builder.configure(target.get("dp.src_dir"), build_path)
         builder.build(build_path)
-        if "no_install" not in target:
+        no_install = devpipeline_core.toolsupport.choose_tool_key(
+            current_target, _NO_INSTALL_KEYS)
+        if no_install not in target:
             install_path = target.get(
-                "install_path", fallback="install")
+                devpipeline_core.toolsupport.choose_tool_key(
+                    current_target, _INSTALL_PATH_KEYS), fallback="install")
             builder.install(build_path, install_path)
             _find_file_paths(target, os.path.join(build_path, install_path))
     except devpipeline_core.toolsupport.MissingToolKey as mtk:

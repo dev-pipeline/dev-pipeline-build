@@ -28,7 +28,9 @@ setup(
         ],
 
         'devpipeline.config_sanitizers': [
-            "missing-build-option = devpipeline_build.builder:_no_build_check"
+            "missing-build-option = devpipeline_build.builder:_no_build_check",
+            "deprecated-no-install = devpipeline_build.builder:_deprecated_no_install_check",
+            "deprecated-install-path = devpipeline_build.builder:_deprecated_install_path_check"
         ]
     },
 

@@ -31,8 +31,16 @@ Options
 
 Config Options
 --------------
-* :code:`build` - (**Required**) The build tool to use.  Available options are
-  a union of what's built in and options available through installed plugins.
-* :code:`install_path` - The path *within the build directory* to install a
-  package.  If unspecified, :code:`install` will be used.
-* :code:`no_install` - Prevent a package from being installed.
+* :code:`build.tool` - (**Required**) The build tool to use.  Available options
+  are a union of what's built in and options available through installed
+  plugins.
+* :code:`build.install_path` - The path *within the build directory* to install
+  a package.  If unspecified, :code:`install` will be used.
+* :code:`build.no_install` - Prevent a package from being installed.
+
+
+Deprecated Options
+------------------
+* :code:`build` - Use :code:`build.tool`
+* :code:`install_path` - Use :code:`build.install_path`
+* :code:`no_install` - Use :code:`build.no_install`
