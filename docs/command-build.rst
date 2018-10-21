@@ -37,6 +37,15 @@ Config Options
 * :code:`build.install_path` - The path *within the build directory* to install
   a package.  If unspecified, :code:`install` will be used.
 * :code:`build.no_install` - Prevent a package from being installed.
+* :code:`build.artifact_paths` - A comma-separated list of key value pairs of
+  *installed* build artifacts to find.  After the build is completed, each
+  requested file will be found and the full path of the owner will be stored in
+  :code:`dp.build.artifact_path.<key>`.  For example,
+  :code:`build.artifact_paths = cmake_path=fmt-targets.cmake` will store the
+  location of :code:`fmt-targets.cmake` in
+  :code:`dp.build.artifact_path.cmake_path`.  Because the artifacts can't be
+  found until after being installed, be sure you've set the corresponding
+  :code:`depends` appropriately.
 
 
 Deprecated Options
