@@ -30,7 +30,8 @@ setup(
         'devpipeline.config_sanitizers': [
             "missing-build-option = devpipeline_build.builder:_no_build_check",
             "deprecated-no-install = devpipeline_build.builder:_deprecated_no_install_check",
-            "deprecated-install-path = devpipeline_build.builder:_deprecated_install_path_check"
+            "deprecated-install-path = devpipeline_build.builder:_deprecated_install_path_check",
+            "no-install-artifact-paths = devpipeline_build.builder:_no_install_artifact_paths"
         ]
     },
 

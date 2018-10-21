@@ -71,6 +71,16 @@ def _deprecated_install_path_check(configuration, error_fn):
     _check_deprecated_helper(configuration, _INSTALL_PATH_KEYS, error_fn)
 
 
+def _no_install_artifact_paths(configuration, error_fn):
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        if 'build.artifact_paths' in component:
+            key = _find_key(component, _NO_INSTALL_KEYS)
+            if key:
+                error_fn(
+                    "{} - Cannot use build.artifact_paths with {}".format(component_name, key))
+
+
 def _make_builder(config, current_target):
     """
     Create and return a Builder for a component.
