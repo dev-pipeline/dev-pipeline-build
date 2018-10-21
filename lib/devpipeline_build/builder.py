@@ -42,25 +42,27 @@ def _find_key(component, keys):
     return None
 
 
-def _no_build_check(configuration, error_fn):
-    for component_name in configuration.components():
-        component = configuration.get(component_name)
-        build_key = _find_key(component, _BUILD_TOOL_KEYS)
-        if not build_key:
-            error_fn("No builder declared in {}".format(component_name))
-        if build_key and (build_key != _BUILD_TOOL_KEYS[0]):
-            error_fn("{}: {} is deprecated; migrate to {}".format(
-                component_name, build_key, _BUILD_TOOL_KEYS[0]))
+def _final_deprecated_check(real_key, expected_key, component_name, error_fn):
+    if real_key and (real_key != expected_key):
+        error_fn("{}: {} is deprecated; migrate to {}".format(
+            component_name, real_key, expected_key))
 
 
 def _check_deprecated_helper(configuration, keys, error_fn):
     for component_name in configuration.components():
         component = configuration.get(component_name)
         key = _find_key(component, keys)
-        if key and (key != keys[0]):
-            error_fn(
-                "{}: {} is deprecated; migrated to {}".format(
-                    component_name, key, keys[0]))
+        _final_deprecated_check(key, keys[0], component_name, error_fn)
+
+
+def _no_build_check(configuration, error_fn):
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        build_key = _find_key(component, _BUILD_TOOL_KEYS)
+        if not build_key:
+            error_fn("No builder declared in {}".format(component_name))
+        _final_deprecated_check(build_key, _BUILD_TOOL_KEYS[0],
+                                component_name, error_fn)
 
 
 def _deprecated_no_install_check(configuration, error_fn):
@@ -77,8 +79,8 @@ def _no_install_artifact_paths(configuration, error_fn):
         if 'build.artifact_paths' in component:
             key = _find_key(component, _NO_INSTALL_KEYS)
             if key:
-                error_fn(
-                    "{} - Cannot use build.artifact_paths with {}".format(component_name, key))
+                error_fn("{} - Cannot use build.artifact_paths with {}".format(
+                    component_name, key))
 
 
 def _make_builder(config, current_target):
