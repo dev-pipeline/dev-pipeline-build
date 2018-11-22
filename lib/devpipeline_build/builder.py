@@ -1,9 +1,12 @@
 #!/usr/bin/python3
 """This modules aggregates the available builders that can be used."""
 
+import hashlib
 import os.path
 import os
+import re
 
+import devpipeline_core.config.paths
 import devpipeline_core.toolsupport
 
 import devpipeline_build
@@ -118,6 +121,30 @@ def _find_file_paths(component, install_path):
         component.set("dp.build.artifact_path.{}".format(key), found_path)
 
 
+_IGNORE_KEY_PATTERN = re.compile(R"^dp\.")
+_WHITELISTED_KEYS = [
+    "dp.profile_name"
+]
+
+
+def _get_build_path(target_configuration):
+    build_dir = target_configuration.get("dp.build_dir")
+    if not build_dir:
+        # deal with imported packages
+        h = hashlib.sha256()
+        for key in sorted(target_configuration):
+            m = _IGNORE_KEY_PATTERN.match(key)
+            if not m or (m and (key in _WHITELISTED_KEYS)):
+                hash_key = "{}={}".format(key, target_configuration.get(key))
+                h.update(hash_key.encode("utf-8"))
+        build_dir = devpipeline_core.config.paths._make_path(
+            None, "build.cache", target_configuration.get("dp.import_name"),
+            target_configuration.get("dp.import_version"),
+            h.hexdigest())
+        target_configuration.set("dp.build_dir", build_dir)
+    return build_dir
+
+
 def build_task(current_target):
     """
     Build a target.
@@ -127,7 +154,7 @@ def build_task(current_target):
     """
 
     target = current_target["current_config"]
-    build_path = target.get("dp.build_dir")
+    build_path = _get_build_path(target)
     if not os.path.exists(build_path):
         os.makedirs(build_path)
     try:

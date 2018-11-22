@@ -15,11 +15,26 @@ BUILDERS = devpipeline_core.plugin.query_plugins('devpipeline.builders')
 def _make_build_dir(configuration):
     for component_name in configuration.components():
         component = configuration.get(component_name)
-        component.set(
-            'dp.build_dir',
-            os.path.join(
-                component.get("dp.build_root"),
-                component_name))
+        if ("import" in component):
+            component.set("dp.build_dir", "")
+        else:
+            component.set(
+                'dp.build_dir',
+                os.path.join(
+                    component.get("dp.build_root"),
+                    component_name))
+
+
+def _initialize_artifact_paths(configuration):
+    def _split_val(val):
+        index = val.find('=')
+        return (val[:index], val[index + 1:])
+
+    for component_name in configuration.components():
+        component = configuration.get(component_name)
+        for val in component.get_list('build.artifact_paths'):
+            key, required = _split_val(val)
+            component.set("dp.build.artifact_path.{}".format(key), "NOTFOUND")
 
 
 class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):

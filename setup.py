@@ -28,6 +28,7 @@ setup(
         ],
 
         'devpipeline.config_modifiers': [
+            'initialize_artifact_paths = devpipeline_build:_initialize_artifact_paths',
             'build_dir = devpipeline_build:_make_build_dir'
         ],
 
