@@ -29,6 +29,10 @@ def _nothing_builder(current_config):
             # pylint: disable=missing-docstring
             pass
 
+        def get_key_args(self):
+            # pylint: disable=missing-docstring
+            return []
+
     return _NothingBuilder()
 
 
@@ -123,24 +127,34 @@ def _find_file_paths(component, install_path):
 
 _IGNORE_KEY_PATTERN = re.compile(R"^dp\.")
 _WHITELISTED_KEYS = [
-    "dp.profile_name"
+    "dp.profile_name",
+    "dp.overrides"
 ]
 
 
-def _get_build_path(target_configuration):
+def _guess_build_dir(target_configuration, hash):
+    for key in sorted(target_configuration):
+        m = _IGNORE_KEY_PATTERN.match(key)
+        if not m or (m and (key in _WHITELISTED_KEYS)):
+            hash_key = "{}={}".format(key, target_configuration.get(key))
+            hash.update(hash_key.encode("utf-8"))
+
+
+def _get_build_path(target_configuration, builder):
     build_dir = target_configuration.get("dp.build_dir")
     if not build_dir:
         # deal with imported packages
-        h = hashlib.sha256()
-        for key in sorted(target_configuration):
-            m = _IGNORE_KEY_PATTERN.match(key)
-            if not m or (m and (key in _WHITELISTED_KEYS)):
-                hash_key = "{}={}".format(key, target_configuration.get(key))
-                h.update(hash_key.encode("utf-8"))
+        hash = hashlib.sha256()
+        try:
+            for val in builder.get_key_args():
+                hash.update(val.encode("utf-8"))
+        except AttributeError:
+            _guess_build_dir(target_configuration, hash)
+        hash.update(target_configuration.get("dp.src_dir").encode("utf-8"))
         build_dir = devpipeline_core.config.paths._make_path(
             None, "build.cache", target_configuration.get("dp.import_name"),
             target_configuration.get("dp.import_version"),
-            h.hexdigest())
+            hash.hexdigest())
         target_configuration.set("dp.build_dir", build_dir)
     return build_dir
 
@@ -154,11 +168,11 @@ def build_task(current_target):
     """
 
     target = current_target["current_config"]
-    build_path = _get_build_path(target)
-    if not os.path.exists(build_path):
-        os.makedirs(build_path)
     try:
         builder = _make_builder(target, current_target)
+        build_path = _get_build_path(target, builder)
+        if not os.path.exists(build_path):
+            os.makedirs(build_path)
         builder.configure(target.get("dp.src_dir"), build_path)
         builder.build(build_path)
         no_install = devpipeline_core.toolsupport.choose_tool_key(

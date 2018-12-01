@@ -44,6 +44,10 @@ class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):
     def __init__(self, real, current_target):
         super().__init__(current_target, real)
 
+    def get_key_args(self):
+        # pylint: disable=missing-docstring
+        return self.real.get_key_args()
+
     def configure(self, src_dir, build_dir):
         # pylint: disable=missing-docstring
         self._call_helper("Configuring", self.real.configure,
