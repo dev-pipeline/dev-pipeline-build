@@ -6,7 +6,7 @@ import os.path
 import os
 import re
 
-import devpipeline_core.config.paths
+import devpipeline_core.paths
 import devpipeline_core.toolsupport
 
 import devpipeline_build
@@ -151,10 +151,12 @@ def _get_build_path(target_configuration, builder):
         except AttributeError:
             _guess_build_dir(target_configuration, hash)
         hash.update(target_configuration.get("dp.src_dir").encode("utf-8"))
-        build_dir = devpipeline_core.config.paths._make_path(
-            None, "build.cache", target_configuration.get("dp.import_name"),
-            target_configuration.get("dp.import_version"),
-            hash.hexdigest())
+        build_dir = devpipeline_core.paths.make_path(target_configuration,
+                                                     "build.cache", target_configuration.get(
+                                                         "dp.import_name"),
+                                                     target_configuration.get(
+                                                         "dp.import_version"),
+                                                     hash.hexdigest())
         target_configuration.set("dp.build_dir", build_dir)
     return build_dir
 
