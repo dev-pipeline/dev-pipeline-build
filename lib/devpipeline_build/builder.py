@@ -56,20 +56,18 @@ def _final_deprecated_check(real_key, expected_key, component_name, error_fn):
 
 
 def _check_deprecated_helper(configuration, keys, error_fn):
-    for component_name in configuration.components():
-        component = configuration.get(component_name)
-        key = _find_key(component, keys)
-        _final_deprecated_check(key, keys[0], component_name, error_fn)
+    for name, config in configuration.items():
+        key = _find_key(config, keys)
+        _final_deprecated_check(key, keys[0], name, error_fn)
 
 
 def _no_build_check(configuration, error_fn):
-    for component_name in configuration.components():
-        component = configuration.get(component_name)
-        build_key = _find_key(component, _BUILD_TOOL_KEYS)
+    for name, config in configuration.items():
+        build_key = _find_key(config, _BUILD_TOOL_KEYS)
         if not build_key:
-            error_fn("No builder declared in {}".format(component_name))
+            error_fn("No builder declared in {}".format(name))
         _final_deprecated_check(build_key, _BUILD_TOOL_KEYS[0],
-                                component_name, error_fn)
+                                name, error_fn)
 
 
 def _deprecated_no_install_check(configuration, error_fn):
@@ -81,13 +79,12 @@ def _deprecated_install_path_check(configuration, error_fn):
 
 
 def _no_install_artifact_paths(configuration, error_fn):
-    for component_name in configuration.components():
-        component = configuration.get(component_name)
-        if 'build.artifact_paths' in component:
-            key = _find_key(component, _NO_INSTALL_KEYS)
+    for name, config in configuration.items():
+        if 'build.artifact_paths' in config:
+            key = _find_key(config, _NO_INSTALL_KEYS)
             if key:
                 error_fn("{} - Cannot use build.artifact_paths with {}".format(
-                    component_name, key))
+                    name, key))
 
 
 def _make_builder(config, current_target):
