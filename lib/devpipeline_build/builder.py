@@ -166,7 +166,7 @@ def build_task(current_target):
     target - The target to build.
     """
 
-    target = current_target["current_config"]
+    target = current_target.config
     try:
         builder = _make_builder(target, current_target)
         build_path = _get_build_path(target, builder)
@@ -183,4 +183,4 @@ def build_task(current_target):
             builder.install(build_path, install_path)
             _find_file_paths(target, os.path.join(build_path, install_path))
     except devpipeline_core.toolsupport.MissingToolKey as mtk:
-        current_target["executor"].warning(mtk)
+        current_target.executor.warning(mtk)
