@@ -14,7 +14,7 @@ BUILDERS = devpipeline_core.plugin.query_plugins('devpipeline.builders')
 
 def _make_build_dir(configuration):
     for name, config in configuration.items():
-        if ("import" in config):
+        if "import" in config:
             config.set("dp.build_dir", "")
         else:
             config.set("dp.build_dir",
@@ -30,6 +30,7 @@ def _initialize_artifact_paths(configuration):
         del name
         for val in config.get_list('build.artifact_paths'):
             key, required = _split_val(val)
+            del required
             config.set("dp.build.artifact_path.{}".format(key), "NOTFOUND")
 
 

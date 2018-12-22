@@ -30,7 +30,7 @@ def _nothing_builder(current_config):
             pass
 
         def get_key_args(self):
-            # pylint: disable=missing-docstring
+            # pylint: disable=missing-docstring,no-self-use
             return []
 
     return _NothingBuilder()
@@ -129,31 +129,31 @@ _WHITELISTED_KEYS = [
 ]
 
 
-def _guess_build_dir(target_configuration, hash):
+def _guess_build_dir(target_configuration, hasher):
     for key in sorted(target_configuration):
-        m = _IGNORE_KEY_PATTERN.match(key)
-        if not m or (m and (key in _WHITELISTED_KEYS)):
+        match = _IGNORE_KEY_PATTERN.match(key)
+        if not match or (match and (key in _WHITELISTED_KEYS)):
             hash_key = "{}={}".format(key, target_configuration.get(key))
-            hash.update(hash_key.encode("utf-8"))
+            hasher.update(hash_key.encode("utf-8"))
 
 
 def _get_build_path(target_configuration, builder):
     build_dir = target_configuration.get("dp.build_dir")
     if not build_dir:
         # deal with imported packages
-        hash = hashlib.sha256()
+        hasher = hashlib.sha256()
         try:
             for val in builder.get_key_args():
-                hash.update(val.encode("utf-8"))
+                hasher.update(val.encode("utf-8"))
         except AttributeError:
-            _guess_build_dir(target_configuration, hash)
-        hash.update(target_configuration.get("dp.src_dir").encode("utf-8"))
+            _guess_build_dir(target_configuration, hasher)
+        hasher.update(target_configuration.get("dp.src_dir").encode("utf-8"))
         build_dir = devpipeline_core.paths.make_path(target_configuration,
                                                      "build.cache", target_configuration.get(
                                                          "dp.import_name"),
                                                      target_configuration.get(
                                                          "dp.import_version"),
-                                                     hash.hexdigest())
+                                                     hasher.hexdigest())
         target_configuration.set("dp.build_dir", build_dir)
     return build_dir
 
