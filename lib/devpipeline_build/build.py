@@ -11,8 +11,7 @@ import devpipeline_build.builder
 
 def _list_builders():
     for builder in sorted(devpipeline_build.BUILDERS):
-        print("{} - {}".format(builder,
-                               devpipeline_build.BUILDERS[builder][1]))
+        print("{} - {}".format(builder, devpipeline_build.BUILDERS[builder][1]))
 
 
 _MAJOR = 0
@@ -26,12 +25,15 @@ class BuildCommand(devpipeline_core.command.TargetCommand):
     """Class to provide build functionality to dev-pipeline."""
 
     def __init__(self, config_fn):
-        super().__init__(config_fn=config_fn,
-                         prog="dev-pipeline build",
-                         description="Build targets")
-        self.add_argument("--list-builders", action='store_true',
-                          default=argparse.SUPPRESS,
-                          help="List the available builder tools")
+        super().__init__(
+            config_fn=config_fn, prog="dev-pipeline build", description="Build targets"
+        )
+        self.add_argument(
+            "--list-builders",
+            action="store_true",
+            default=argparse.SUPPRESS,
+            help="List the available builder tools",
+        )
         self.enable_dependency_resolution()
         self.enable_executors()
         self.set_tasks([devpipeline_build.builder.build_task])
@@ -55,5 +57,5 @@ def main(args=None, config_fn=devpipeline_configure.cache.update_cache):
 
 _BUILD_COMMAND = (main, "Build and install a set of components.")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ import os.path
 
 import devpipeline_core.plugin
 
-BUILDERS = devpipeline_core.plugin.query_plugins('devpipeline.builders')
+BUILDERS = devpipeline_core.plugin.query_plugins("devpipeline.builders")
 
 
 def _make_build_dir(configuration):
@@ -17,18 +17,17 @@ def _make_build_dir(configuration):
         if "import" in config:
             config.set("dp.build_dir", "")
         else:
-            config.set("dp.build_dir",
-                       os.path.join(config.get("dp.build_root"), name))
+            config.set("dp.build_dir", os.path.join(config.get("dp.build_root"), name))
 
 
 def _initialize_artifact_paths(configuration):
     def _split_val(val):
-        index = val.find('=')
-        return (val[:index], val[index + 1:])
+        index = val.find("=")
+        return (val[:index], val[index + 1 :])
 
     for name, config in configuration.items():
         del name
-        for val in config.get_list('build.artifact_paths'):
+        for val in config.get_list("build.artifact_paths"):
             key, required = _split_val(val)
             del required
             config.set("dp.build.artifact_path.{}".format(key), "NOTFOUND")
@@ -47,18 +46,15 @@ class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):
 
     def configure(self, src_dir, build_dir):
         # pylint: disable=missing-docstring
-        self._call_helper("Configuring", self.real.configure,
-                          src_dir, build_dir)
+        self._call_helper("Configuring", self.real.configure, src_dir, build_dir)
 
     def build(self, build_dir):
         # pylint: disable=missing-docstring
-        self._call_helper("Building", self.real.build,
-                          build_dir)
+        self._call_helper("Building", self.real.build, build_dir)
 
     def install(self, build_dir, path=None):
         # pylint: disable=missing-docstring
-        self._call_helper("Installing", self.real.install,
-                          build_dir, path)
+        self._call_helper("Installing", self.real.install, build_dir, path)
 
 
 def make_simple_builder(real_builder, configuration):
