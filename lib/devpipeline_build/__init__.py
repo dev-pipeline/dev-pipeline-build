@@ -44,17 +44,17 @@ class _SimpleBuild(devpipeline_core.toolsupport.SimpleTool):
         # pylint: disable=missing-docstring
         return self.real.get_key_args()
 
-    def configure(self, src_dir, build_dir):
+    def configure(self, *args, **kwargs):
         # pylint: disable=missing-docstring
-        self._call_helper("Configuring", self.real.configure, src_dir, build_dir)
+        self._call_helper("Configuring", self.real.configure, *args, **kwargs)
 
-    def build(self, build_dir):
+    def build(self, *args, **kwargs):
         # pylint: disable=missing-docstring
-        self._call_helper("Building", self.real.build, build_dir)
+        self._call_helper("Building", self.real.build, *args, **kwargs)
 
-    def install(self, build_dir, path=None):
+    def install(self, *args, **kwargs):
         # pylint: disable=missing-docstring
-        self._call_helper("Installing", self.real.install, build_dir, path)
+        self._call_helper("Installing", self.real.install, *args, **kwargs)
 
 
 def make_simple_builder(real_builder, configuration):

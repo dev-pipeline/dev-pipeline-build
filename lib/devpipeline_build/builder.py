@@ -25,7 +25,7 @@ def _nothing_builder(current_config):
             # pylint: disable=missing-docstring
             pass
 
-        def install(self, build_dir, path):
+        def install(self, build_dir, install_dir):
             # pylint: disable=missing-docstring
             pass
 
@@ -174,8 +174,8 @@ def build_task(current_target):
         build_path = _get_build_path(target, builder)
         if not os.path.exists(build_path):
             os.makedirs(build_path)
-        builder.configure(target.get("dp.src_dir"), build_path)
-        builder.build(build_path)
+        builder.configure(src_dir=target.get("dp.src_dir"), build_dir=build_path)
+        builder.build(build_dir=build_path)
         no_install = devpipeline_core.toolsupport.choose_tool_key(
             current_target, _NO_INSTALL_KEYS
         )
@@ -186,7 +186,7 @@ def build_task(current_target):
                 ),
                 fallback="install",
             )
-            builder.install(build_path, install_path)
+            builder.install(build_dir=build_path, install_dir=install_path)
             _find_file_paths(target, os.path.join(build_path, install_path))
     except devpipeline_core.toolsupport.MissingToolKey as mtk:
         current_target.executor.warning(mtk)
