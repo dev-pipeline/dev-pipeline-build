@@ -21,12 +21,15 @@ _PATCH = 0
 _STRING = "{}.{}.{}".format(_MAJOR, _MINOR, _PATCH)
 
 
-class BuildCommand(devpipeline_core.command.TargetCommand):
+class BuildCommand(devpipeline_core.command.TaskCommand):
     """Class to provide build functionality to dev-pipeline."""
 
     def __init__(self, config_fn):
         super().__init__(
-            config_fn=config_fn, prog="dev-pipeline build", description="Build targets"
+            config_fn=config_fn,
+            tasks=[devpipeline_build.builder.build_task],
+            prog="dev-pipeline build",
+            description="Build targets",
         )
         self.add_argument(
             "--list-builders",
@@ -34,9 +37,6 @@ class BuildCommand(devpipeline_core.command.TargetCommand):
             default=argparse.SUPPRESS,
             help="List the available builder tools",
         )
-        self.enable_dependency_resolution()
-        self.enable_executors()
-        self.set_tasks([devpipeline_build.builder.build_task])
         self.helper_fn = lambda: super(BuildCommand, self).process()
         self.set_version(_STRING)
 
