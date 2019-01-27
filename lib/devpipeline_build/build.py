@@ -15,7 +15,7 @@ def _list_builders():
 
 
 _MAJOR = 0
-_MINOR = 4
+_MINOR = 5
 _PATCH = 0
 
 _STRING = "{}.{}.{}".format(_MAJOR, _MINOR, _PATCH)
