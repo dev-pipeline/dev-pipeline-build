@@ -37,15 +37,13 @@ class BuildCommand(devpipeline_core.command.TaskCommand):
             default=argparse.SUPPRESS,
             help="List the available builder tools",
         )
-        self.helper_fn = lambda: super(BuildCommand, self).process()
         self.set_version(_STRING)
 
-    def setup(self, arguments):
+    def process(self, arguments):
         if "list_builders" in arguments:
-            self.helper_fn = _list_builders
-
-    def process(self):
-        self.helper_fn()
+            _list_builders()
+        else:
+            super().process(arguments)
 
 
 def main(args=None, config_fn=devpipeline_configure.cache.update_cache):
