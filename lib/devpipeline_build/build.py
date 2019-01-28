@@ -27,7 +27,7 @@ class BuildCommand(devpipeline_core.command.TaskCommand):
     def __init__(self, config_fn):
         super().__init__(
             config_fn=config_fn,
-            tasks=[("build", devpipeline_build.builder.build_task)],
+            tasks=[devpipeline_build.builder.BUILD_TASK],
             prog="dev-pipeline build",
             description="Build targets",
         )

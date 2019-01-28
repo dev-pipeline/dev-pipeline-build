@@ -190,3 +190,6 @@ def build_task(current_target):
             _find_file_paths(target, os.path.join(build_path, install_path))
     except devpipeline_core.toolsupport.MissingToolKey as mtk:
         current_target.executor.warning(mtk)
+
+
+BUILD_TASK = ("build", build_task)
