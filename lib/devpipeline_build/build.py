@@ -9,11 +9,6 @@ import devpipeline_configure.load
 import devpipeline_build.builder
 
 
-def _list_builders():
-    for builder in sorted(devpipeline_build.BUILDERS):
-        print("{} - {}".format(builder, devpipeline_build.BUILDERS[builder][1]))
-
-
 _MAJOR = 0
 _MINOR = 5
 _PATCH = 0
@@ -21,39 +16,30 @@ _PATCH = 0
 _STRING = "{}.{}.{}".format(_MAJOR, _MINOR, _PATCH)
 
 
-class BuildCommand(devpipeline_core.command.TaskCommand):
-    """Class to provide build functionality to dev-pipeline."""
+def _configure(parser):
+    # parser.add_argument(
+    # "--list-builders",
+    # action="store_true",
+    # default=argparse.SUPPRESS,
+    # help="List the available builder tools",
+    # )
+    devpipeline_core.command.setup_task_parser(parser)
+    devpipeline_core.command.add_version_info(parser, _STRING)
 
-    def __init__(self, config_fn):
-        super().__init__(
-            config_fn=config_fn,
-            tasks=[devpipeline_build.builder.BUILD_TASK],
-            prog="dev-pipeline build",
-            description="Build targets",
+
+def _execute(arguments):
+    def _list_builders():
+        for builder in sorted(devpipeline_build.BUILDERS):
+            print("{} - {}".format(builder, devpipeline_build.BUILDERS[builder][1]))
+
+    if "list_builders" in arguments:
+        _list_builders()
+    else:
+        devpipeline_core.command.process_tasks(
+            arguments,
+            [devpipeline_build.builder.BUILD_TASK],
+            devpipeline_configure.load.update_cache,
         )
-        self.add_argument(
-            "--list-builders",
-            action="store_true",
-            default=argparse.SUPPRESS,
-            help="List the available builder tools",
-        )
-        self.set_version(_STRING)
-
-    def process(self, arguments):
-        if "list_builders" in arguments:
-            _list_builders()
-        else:
-            super().process(arguments)
 
 
-def main(args=None, config_fn=devpipeline_configure.load.update_cache):
-    # pylint: disable=missing-docstring
-    builder = BuildCommand(config_fn)
-    # pylint: disable=missing-docstring
-    devpipeline_core.command.execute_command(builder, args)
-
-
-_BUILD_COMMAND = (main, "Build and install a set of components.")
-
-if __name__ == "__main__":
-    main()
+_BUILD_COMMAND = ("Build and install a set of components.", _configure, _execute)
