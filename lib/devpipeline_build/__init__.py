@@ -7,7 +7,10 @@ contains every builder plugin.
 
 import os.path
 
+import devpipeline_core.command
 import devpipeline_core.plugin
+
+import devpipeline_build.version
 
 BUILDERS = devpipeline_core.plugin.query_plugins("devpipeline.builders")
 
@@ -66,3 +69,17 @@ def make_simple_builder(real_builder, configuration):
     configuration - the configuration for the Build target
     """
     return _SimpleBuild(real_builder, configuration)
+
+
+def _configure_tool(parser):
+    devpipeline_core.command.add_version_info(parser, devpipeline_build.version.STRING)
+
+
+def _list_builders(arguments):
+    del arguments
+
+    for builder in sorted(BUILDERS):
+        print("{} - {}".format(builder, BUILDERS[builder][1]))
+
+
+_LIST_BUILDERS_COMMAND = ("List available builders", _configure_tool, _list_builders)

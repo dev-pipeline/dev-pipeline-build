@@ -17,7 +17,10 @@ setup(
         "dev-pipeline-configure >= {}".format(_VERSION),
     ],
     entry_points={
-        "devpipeline.drivers": ["build = devpipeline_build.build:_BUILD_COMMAND"],
+        "devpipeline.drivers": [
+            "build = devpipeline_build.build:_BUILD_COMMAND",
+            "list-builders = devpipeline_build:_LIST_BUILDERS_COMMAND",
+        ],
         "devpipeline.builders": [
             "nothing = devpipeline_build.builder:_NOTHING_BUILDER"
         ],
